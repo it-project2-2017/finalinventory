@@ -420,7 +420,6 @@ public class main extends javax.swing.JFrame {
         welcomePanel.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(605, 160, 250, 60));
 
         purchasing.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/purchasing.png"))); // NOI18N
-        purchasing.setBorder(null);
         purchasing.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 purchasingMouseClicked(evt);
@@ -435,7 +434,6 @@ public class main extends javax.swing.JFrame {
         welcomePanel.add(purchasing, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 330, 170, 170));
 
         inventory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/inventory.png"))); // NOI18N
-        inventory.setBorder(null);
         inventory.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 inventoryMouseClicked(evt);
@@ -519,7 +517,6 @@ public class main extends javax.swing.JFrame {
         purchasingPanel.add(logOutTwo, new org.netbeans.lib.awtextra.AbsoluteConstraints(947, 30, 75, -1));
 
         purchOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/purchOrder.png"))); // NOI18N
-        purchOrder.setBorder(null);
         purchOrder.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 purchOrderMouseClicked(evt);
@@ -531,7 +528,6 @@ public class main extends javax.swing.JFrame {
         purchasingPanel.add(purchOrder, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
 
         purchList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/purchList.png"))); // NOI18N
-        purchList.setBorder(null);
         purchList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 purchListMouseClicked(evt);
@@ -546,7 +542,6 @@ public class main extends javax.swing.JFrame {
         subPurchasingOne.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         newPurch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/np.png"))); // NOI18N
-        newPurch.setBorder(null);
         newPurch.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 newPurchMouseClicked(evt);
@@ -555,7 +550,6 @@ public class main extends javax.swing.JFrame {
         subPurchasingOne.add(newPurch, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, -1, -1));
 
         receiveStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/rs.png"))); // NOI18N
-        receiveStock.setBorder(null);
         receiveStock.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 receiveStockMouseClicked(evt);
@@ -564,7 +558,6 @@ public class main extends javax.swing.JFrame {
         subPurchasingOne.add(receiveStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 5, -1, -1));
 
         returnStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/rt.png"))); // NOI18N
-        returnStock.setBorder(null);
         returnStock.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 returnStockMouseClicked(evt);
@@ -1098,7 +1091,6 @@ public class main extends javax.swing.JFrame {
         inventoryPanel.add(logOutThree, new org.netbeans.lib.awtextra.AbsoluteConstraints(947, 30, 75, 89));
 
         btnCurrentStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/currentStock.png"))); // NOI18N
-        btnCurrentStock.setBorder(null);
         btnCurrentStock.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnCurrentStockMouseClicked(evt);
@@ -1107,7 +1099,6 @@ public class main extends javax.swing.JFrame {
         inventoryPanel.add(btnCurrentStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
 
         btnLedger.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/ledger.png"))); // NOI18N
-        btnLedger.setBorder(null);
         btnLedger.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnLedgerMouseClicked(evt);
@@ -1116,7 +1107,6 @@ public class main extends javax.swing.JFrame {
         inventoryPanel.add(btnLedger, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 30, -1, -1));
 
         btnArchery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/archery.png"))); // NOI18N
-        btnArchery.setBorder(null);
         btnArchery.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnArcheryMouseClicked(evt);
@@ -1125,7 +1115,6 @@ public class main extends javax.swing.JFrame {
         inventoryPanel.add(btnArchery, new org.netbeans.lib.awtextra.AbsoluteConstraints(346, 30, -1, -1));
 
         btnTransHisto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/transHist.png"))); // NOI18N
-        btnTransHisto.setBorder(null);
         btnTransHisto.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnTransHistoMouseClicked(evt);
@@ -1139,7 +1128,6 @@ public class main extends javax.swing.JFrame {
         subInventoryOne.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnBasic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/brm.png"))); // NOI18N
-        btnBasic.setBorder(null);
         btnBasic.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnBasicMouseClicked(evt);
@@ -1148,7 +1136,6 @@ public class main extends javax.swing.JFrame {
         subInventoryOne.add(btnBasic, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, -1, -1));
 
         btnCompound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/crm.png"))); // NOI18N
-        btnCompound.setBorder(null);
         btnCompound.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnCompoundMouseClicked(evt);
