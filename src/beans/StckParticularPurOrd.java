@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StckParticularPurOrd implements Serializable {
     @XmlElement(required=true)
+    private int sppoid;
+    @XmlElement(required=true)
     private int particularsid;
     @XmlElement(required=true)
     private int suppid;
@@ -39,7 +41,11 @@ public class StckParticularPurOrd implements Serializable {
     @XmlElement
     private int qtydelivered;
     @XmlElement
-    private String datedelivered;    
+    private String datedelivered;
+    @XmlElement
+    private int qtyreturned;
+    @XmlElement
+    private String datereturned;
     @XmlElement
     private int stckid;
     @XmlElement
@@ -56,6 +62,30 @@ public class StckParticularPurOrd implements Serializable {
         this.poid = poid;
         this.empid = empid;
         this.qtyordered = qtyordered;
+    }
+    
+    public int getQtyreturned() {
+        return qtyreturned;
+    }
+
+    public void setQtyreturned(int qtyreturned) {
+        this.qtyreturned = qtyreturned;
+    }
+
+    public String getDatereturned() {
+        return datereturned;
+    }
+
+    public void setDatereturned(String datereturned) {
+        this.datereturned = datereturned;
+    }
+    
+    public int getSppoid() {
+        return sppoid;
+    }
+
+    public void setSppoid(int sppoid) {
+        this.sppoid = sppoid;
     }
     
     public String getStatus() {

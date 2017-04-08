@@ -16,15 +16,21 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author gina PC
  */
-@XmlRootElement(name="purchase")
+@XmlRootElement(name="purchaseorder")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PurchaseOrder implements Serializable {
     @XmlElement(required=true)
     private int poid;
     @XmlElement(required=true)
     private String dateordered;
-    @XmlElement(required=true)
+    @XmlElement
     private String status;
+    @XmlElement
+    private String spostatus;
+    @XmlElement
+    private String particularname;
+    @XmlElement
+    private String supname;
     
     public PurchaseOrder(){
     }  
@@ -32,6 +38,31 @@ public class PurchaseOrder implements Serializable {
     public PurchaseOrder(String dateordered, String status) {
         this.dateordered = dateordered;
         this.status = status;
+    }
+    
+    
+    public String getSpostatus() {
+        return spostatus;
+    }
+
+    public void setSpostatus(String spostatus) {
+        this.spostatus = spostatus;
+    }
+    
+    public String getParticularname() {
+        return particularname;
+    }
+
+    public void setParticularname(String particularname) {
+        this.particularname = particularname;
+    }
+
+    public String getSupname() {
+        return supname;
+    }
+
+    public void setSupname(String supname) {
+        this.supname = supname;
     }
     
     public int getPoid() {

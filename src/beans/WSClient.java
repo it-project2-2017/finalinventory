@@ -7,17 +7,13 @@ package beans;
  */
 
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.ClientConfig;
 //import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 //import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -39,28 +35,32 @@ public class WSClient {
     
     public static void main(String[] args) {
         try {
-            WSClient wsc = new WSClient();
-            wsc.init();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }    
+    
+    public ArrayList<LedgerRecord> getLedger( int id ){
+        Ledger list = client.target(RS_URL)
+                .path("/ledgerrecord/" + id)
+                .request(MediaType.APPLICATION_JSON)
+                .get(Ledger.class);
+        ArrayList<LedgerRecord> ledger = list.getList();
+        return ledger;
     }
-    /*
-    public void addStckPurOrder( ArrayList<StckPurOrd> stckpurods ){
-      for(int i = 0; i <= stckpurods.size(); i++){
-          numdata.add(model.getValueAt(count, 1).toString());
 
-      }
-      System.out.println(numdata); 
-    }
-    */
-    
-    
-    public Integer stockFinder( String name ){
+    public void addLedgerRecord(LedgerRecord lr){
+        LedgerRecord record = client.target(RS_URL)
+                .path("/addledgerrecord")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(lr, MediaType.APPLICATION_XML), LedgerRecord.class);
+    }    
+        
+        
+    public Integer stockFinder( String name, ArrayList<Stock> stocks ){
         int count = 0;
         int stockNo = 0;
         boolean condition = false;
-        ArrayList<Stock> stocks = stockList();
         while(condition!=true){
             if(name.equals(stocks.get(count).getStockName())){
                 condition = true;
@@ -69,7 +69,7 @@ public class WSClient {
         }
         return count;
     }
-    //returns arraylist<StckParticularPurOrd> containing values of stckparticularpurord
+    
     public ArrayList<StckParticularPurOrd> getStckParticularPurOrd( int id ){
         StckParticularPurOrdList list = client.target(RS_URL)
                 .path("/stckparticularpurord/" + String.valueOf(id) )
@@ -78,19 +78,47 @@ public class WSClient {
         ArrayList<StckParticularPurOrd> sppList = list.getList();
         return sppList;
     }
-    
-    public void updateStckQty( Stock s ){
-        String message = client.target(RS_URL)
-                .path("/updateStckQty" )
+
+    public void returnStock( ReturnStock retstck ){
+        ReturnStock rs = client.target(RS_URL)
+                .path("/returnStckparticular")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(s, MediaType.APPLICATION_XML), String.class);
+                .post(Entity.entity(retstck, MediaType.APPLICATION_XML), ReturnStock.class);
     }
     
-    public void updateStckParticularPurOrd( StckParticularPurOrd spp){
+    public ArrayList<ReturnStock> getRSList( int poid ){
+        ReturnStockList list = client.target(RS_URL)
+                .path("/rsrecord/" + String.valueOf(poid) )
+                .request(MediaType.APPLICATION_JSON)
+                .get(ReturnStockList.class);
+        ArrayList<ReturnStock> restckrecord = list.getList();
+        return restckrecord;
+    }
+    
+    public Stock updateStckQty( int stckid, double qty, String op ){
+        Form f = new Form();    
+        f.param("stckid", String.valueOf(stckid));
+        f.param("qty", String.valueOf(qty));
+        f.param("op", op );
+        Stock stock = client.target(RS_URL)
+                .path("/updateStckQty")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(f, MediaType.APPLICATION_FORM_URLENCODED), Stock.class);
+        return stock;
+    }
+    
+    public void updateStckParticularPurOrd(StckParticularPurOrd spp){
         String stckparticular = client.target(RS_URL)
                 .path("/updateStckParticularPurOrd")
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(spp, MediaType.APPLICATION_XML), String.class);
+    }
+    
+    public void updatePurchaseOrder(int poid){
+        PurchaseOrder po = client.target(RS_URL)
+                .path("/updatePurOrd/" + String.valueOf(poid))
+                .request(MediaType.APPLICATION_JSON)
+                .get(PurchaseOrder.class);
     }
     
     public int getStock( String sname ){
@@ -177,7 +205,7 @@ public class WSClient {
     
     public ArrayList<PurchaseOrder> purchaseOrderList(){
         PurchaseOrderList list = client.target(RS_URL)
-                .path("/purchaseOrders")
+                .path("/purchaseorders")
                 .request(MediaType.APPLICATION_JSON)
                 .get(PurchaseOrderList.class);
         ArrayList<PurchaseOrder> poList = list.getList();
@@ -238,7 +266,7 @@ public class WSClient {
         return tList;
     }
     
-    public ArrayList<Stock> stockList(){
+    public ArrayList<Stock> getStockList(){
         StockList list = client.target(RS_URL)
                 .path("/stocks")
                 .request(MediaType.APPLICATION_JSON)

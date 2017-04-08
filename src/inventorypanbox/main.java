@@ -6,10 +6,11 @@
 package inventorypanbox;
 
 import beans.Employee;
+import beans.LedgerRecord;
 import beans.PurchaseOrder;
+import beans.ReturnStock;
 import beans.StckParticular;
 import beans.StckParticularPurOrd;
-import beans.StckPurOrd;
 import beans.Stock;
 import beans.WSClient;
 import java.awt.CardLayout;
@@ -19,15 +20,17 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerDateModel;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.ws.rs.client.Client;
@@ -49,16 +52,26 @@ public class main extends javax.swing.JFrame {
     
     private void myInitComponents() {
         emplist = wsc.getEmployeeList();
+        stcklist = wsc.getStockList();
+        EmpComboBox ecb = new EmpComboBox(jComboBoxEmp, emplist);
+        StckComboBox scc = new StckComboBox(jTable6, stcklist);
+        scc.execute();
+        ecb.execute();
         Date currentDate = new Date();
         model1 = (DefaultTableModel)jTable11.getModel();
         model2 = (DefaultTableModel)jTable12.getModel();
         model3 = (DefaultTableModel)jTable13.getModel();
+        model4 = (DefaultTableModel)jTable14.getModel();
+        model5 = (DefaultTableModel)jTable15.getModel();
+        stckpurordmodel = (TableModel)jTable12.getModel();
         jXDatePicker3.setDate(currentDate);
         jXDatePicker4.setDate(currentDate);
+        jXDatePicker6.setDate(currentDate);
         jComboBoxStocks = new javax.swing.JComboBox<>();
         jComboBoxStocks.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { }));
-        pPurOrd(jTable10);
+        pPurOrd_incomplete(jTable10);
         pPurOrd(jTable12);
+        pPurOrd_complete(jTable14);
     }
     
     public void initJComboboxStock(){
@@ -154,7 +167,6 @@ public class main extends javax.swing.JFrame {
         jScrollPane13 = new javax.swing.JScrollPane();
         jTable13 = new javax.swing.JTable();
         jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
         jSeparator16 = new javax.swing.JSeparator();
         jLabel46 = new javax.swing.JLabel();
         jXDatePicker4 = new org.jdesktop.swingx.JXDatePicker();
@@ -171,17 +183,16 @@ public class main extends javax.swing.JFrame {
         jScrollPane14 = new javax.swing.JScrollPane();
         jTable14 = new javax.swing.JTable();
         jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
         jSeparator18 = new javax.swing.JSeparator();
-        jLabel45 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox<>();
-        jLabel48 = new javax.swing.JLabel();
-        jXDatePicker5 = new org.jdesktop.swingx.JXDatePicker();
-        jButton11 = new javax.swing.JButton();
         jScrollPane15 = new javax.swing.JScrollPane();
         jTable15 = new javax.swing.JTable();
-        jLabel49 = new javax.swing.JLabel();
-        jSeparator21 = new javax.swing.JSeparator();
+        jLabel57 = new javax.swing.JLabel();
+        jXDatePicker6 = new org.jdesktop.swingx.JXDatePicker();
+        jLabel41 = new javax.swing.JLabel();
+        SpinnerDateModel sm3 = new SpinnerDateModel(new Date(), null, null, Calendar.MINUTE);
+        jSpinner3 = new javax.swing.JSpinner(sm3);
+        jLabel43 = new javax.swing.JLabel();
+        jLabel58 = new javax.swing.JLabel();
         subPurchasingTwo = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
         jScrollPane9 = new javax.swing.JScrollPane();
@@ -533,7 +544,7 @@ public class main extends javax.swing.JFrame {
                 purchListMouseClicked(evt);
             }
         });
-        purchasingPanel.add(purchList, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 30, -1, -1));
+        purchasingPanel.add(purchList, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 30, -1, -1));
 
         mainPurchasing.setBackground(new java.awt.Color(255, 255, 255));
         mainPurchasing.setLayout(new java.awt.CardLayout());
@@ -547,7 +558,7 @@ public class main extends javax.swing.JFrame {
                 newPurchMouseClicked(evt);
             }
         });
-        subPurchasingOne.add(newPurch, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 5, -1, -1));
+        subPurchasingOne.add(newPurch, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         receiveStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/rs.png"))); // NOI18N
         receiveStock.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -555,7 +566,7 @@ public class main extends javax.swing.JFrame {
                 receiveStockMouseClicked(evt);
             }
         });
-        subPurchasingOne.add(receiveStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 5, -1, -1));
+        subPurchasingOne.add(receiveStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 0, -1, 40));
 
         returnStock.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/rt.png"))); // NOI18N
         returnStock.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -563,7 +574,7 @@ public class main extends javax.swing.JFrame {
                 returnStockMouseClicked(evt);
             }
         });
-        subPurchasingOne.add(returnStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(295, 5, -1, -1));
+        subPurchasingOne.add(returnStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 0, -1, -1));
 
         mainPurch.setBackground(new java.awt.Color(255, 255, 255));
         mainPurch.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
@@ -581,14 +592,14 @@ public class main extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Purchase Number", "Date Ordered"
+                "Purchase No.", "Date Ordered", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -601,10 +612,10 @@ public class main extends javax.swing.JFrame {
         });
         jScrollPane10.setViewportView(jTable10);
 
-        subPurchOne.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 50, 230, 540));
+        subPurchOne.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 50, 280, 540));
 
         jSeparator6.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        subPurchOne.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 80, 10, 510));
+        subPurchOne.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(720, 80, 10, 510));
 
         jLabel31.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
         jLabel31.setText("Time:");
@@ -635,7 +646,7 @@ public class main extends javax.swing.JFrame {
         });
         jScrollPane11.setViewportView(jTable11);
 
-        subPurchOne.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 740, 340));
+        subPurchOne.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 690, 340));
 
         jButton2.setText("Save");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -648,7 +659,7 @@ public class main extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        subPurchOne.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 480, -1, -1));
+        subPurchOne.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 480, -1, -1));
 
         jButton4.setText("Clear");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -657,7 +668,7 @@ public class main extends javax.swing.JFrame {
             }
         });
         subPurchOne.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 480, 100, -1));
-        subPurchOne.add(jSeparator13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 750, 10));
+        subPurchOne.add(jSeparator13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 710, 10));
 
         jButton20.setText("Add");
         subPurchOne.add(jButton20, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, -1, -1));
@@ -736,21 +747,21 @@ public class main extends javax.swing.JFrame {
         subPurchTwo.add(jLabel35, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, -1, -1));
 
         jSeparator12.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        subPurchTwo.add(jSeparator12, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 60, 10, 530));
+        subPurchTwo.add(jSeparator12, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 60, 10, 530));
 
         jTable12.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Purchase Number", "Date Ordered"
+                "Purchase No.", "Date Ordered", "Status"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -768,7 +779,7 @@ public class main extends javax.swing.JFrame {
         });
         jScrollPane12.setViewportView(jTable12);
 
-        subPurchTwo.add(jScrollPane12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 210, 530));
+        subPurchTwo.add(jScrollPane12, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 250, 530));
 
         jTable13.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -782,7 +793,7 @@ public class main extends javax.swing.JFrame {
                 java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, true
+                false, false, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -795,7 +806,7 @@ public class main extends javax.swing.JFrame {
         });
         jScrollPane13.setViewportView(jTable13);
 
-        subPurchTwo.add(jScrollPane13, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 110, 760, 470));
+        subPurchTwo.add(jScrollPane13, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, 710, 470));
 
         jButton7.setText("Save");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -803,40 +814,37 @@ public class main extends javax.swing.JFrame {
                 jButton7MouseClicked(evt);
             }
         });
-        subPurchTwo.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 30, -1, -1));
-
-        jButton8.setText("Print");
-        subPurchTwo.add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 30, -1, -1));
-        subPurchTwo.add(jSeparator16, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 60, 770, 10));
+        subPurchTwo.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 30, -1, -1));
+        subPurchTwo.add(jSeparator16, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 60, 730, 10));
 
         jLabel46.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
         jLabel46.setText("Date:");
-        subPurchTwo.add(jLabel46, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 80, -1, -1));
+        subPurchTwo.add(jLabel46, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 80, -1, -1));
 
         jXDatePicker4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jXDatePicker4ActionPerformed(evt);
             }
         });
-        subPurchTwo.add(jXDatePicker4, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 70, 150, 30));
+        subPurchTwo.add(jXDatePicker4, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 70, 150, 30));
 
         jLabel37.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
         jLabel37.setText("Time:");
-        subPurchTwo.add(jLabel37, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 80, 40, -1));
+        subPurchTwo.add(jLabel37, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 80, 40, -1));
 
         JSpinner.DateEditor timeEditor2 = new JSpinner.DateEditor(jSpinner2, "h:mm:ss");
         jSpinner2.setEditor(timeEditor2);
-        subPurchTwo.add(jSpinner2, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 70, 150, 30));
+        subPurchTwo.add(jSpinner2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 150, 30));
 
         jLabel28.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
         jLabel28.setText("Supplier:");
-        subPurchTwo.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 79, 60, -1));
-        subPurchTwo.add(jLabel32, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 70, 70, 30));
-        subPurchTwo.add(jLabel33, new org.netbeans.lib.awtextra.AbsoluteConstraints(860, 70, 100, 30));
+        subPurchTwo.add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 80, 60, -1));
+        subPurchTwo.add(jLabel32, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 70, 70, 30));
+        subPurchTwo.add(jLabel33, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 70, 100, 30));
 
         jLabel34.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
         jLabel34.setText("Employee:");
-        subPurchTwo.add(jLabel34, new org.netbeans.lib.awtextra.AbsoluteConstraints(780, 80, 80, -1));
+        subPurchTwo.add(jLabel34, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 80, 80, -1));
 
         mainPurch.add(subPurchTwo, "subPurchTwo");
 
@@ -848,105 +856,67 @@ public class main extends javax.swing.JFrame {
         subPurchThree.add(jLabel42, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, -1, -1));
 
         jSeparator17.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        subPurchThree.add(jSeparator17, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 60, 10, 530));
+        subPurchThree.add(jSeparator17, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 10, 530));
 
         jTable14.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Purchase Order"
+                "Purchase No.", "Date"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable14.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable14MouseClicked(evt);
+            }
         });
         jScrollPane14.setViewportView(jTable14);
 
-        subPurchThree.add(jScrollPane14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 210, 530));
+        subPurchThree.add(jScrollPane14, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 230, 530));
 
         jButton9.setText("Save");
-        subPurchThree.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 60, -1, -1));
-
-        jButton10.setText("Print");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+        jButton9.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton9MouseClicked(evt);
             }
         });
-        subPurchThree.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 60, -1, -1));
-        subPurchThree.add(jSeparator18, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, 760, 10));
-
-        jLabel45.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
-        jLabel45.setText("Supplier Name:");
-        subPurchThree.add(jLabel45, new org.netbeans.lib.awtextra.AbsoluteConstraints(265, 105, -1, -1));
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        subPurchThree.add(jComboBox3, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 100, 210, 30));
-
-        jLabel48.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
-        jLabel48.setText("Date:");
-        subPurchThree.add(jLabel48, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 105, -1, -1));
-        subPurchThree.add(jXDatePicker5, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 100, 160, 30));
-
-        jButton11.setText("Delete");
-        subPurchThree.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, -1, -1));
+        subPurchThree.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 60, -1, -1));
+        subPurchThree.add(jSeparator18, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 90, 750, 10));
 
         jTable15.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
-                "Raw Material Code", "Raw Material Name", "Quantity Returned", "Return Date", "Unit Price", "Sub Total"
+                "Raw Material Code", "Raw Material Name", "Quantity Delivered", "Quantity Returned"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, true, false, false, false
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -954,14 +924,31 @@ public class main extends javax.swing.JFrame {
         });
         jScrollPane15.setViewportView(jTable15);
 
-        subPurchThree.add(jScrollPane15, new org.netbeans.lib.awtextra.AbsoluteConstraints(242, 140, 770, 410));
+        subPurchThree.add(jScrollPane15, new org.netbeans.lib.awtextra.AbsoluteConstraints(262, 140, 750, 450));
 
-        jLabel49.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
-        jLabel49.setText("Total:");
-        subPurchThree.add(jLabel49, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 560, -1, -1));
+        jLabel57.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
+        jLabel57.setText("Date:");
+        subPurchThree.add(jLabel57, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 110, -1, -1));
 
-        jSeparator21.setForeground(new java.awt.Color(0, 255, 255));
-        subPurchThree.add(jSeparator21, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 580, 110, -1));
+        jXDatePicker6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jXDatePicker6ActionPerformed(evt);
+            }
+        });
+        subPurchThree.add(jXDatePicker6, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 100, 150, 30));
+
+        jLabel41.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
+        jLabel41.setText("Time:");
+        subPurchThree.add(jLabel41, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 110, 40, -1));
+
+        JSpinner.DateEditor timeEditor3 = new JSpinner.DateEditor(jSpinner3, "h:mm:ss");
+        jSpinner3.setEditor(timeEditor3);
+        subPurchThree.add(jSpinner3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 100, 150, 30));
+
+        jLabel43.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
+        jLabel43.setText("Supplier:");
+        subPurchThree.add(jLabel43, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 110, 60, -1));
+        subPurchThree.add(jLabel58, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 100, 130, 30));
 
         mainPurch.add(subPurchThree, "subPurchThree");
 
@@ -978,64 +965,22 @@ public class main extends javax.swing.JFrame {
 
         jTable9.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "Purchase Number", "Raw Material Name", "Order Date", "Purchase Status", "Payment Status", "Supplier Name", "Total Amount", "Amount Paid", "Balance Amount"
+                "Purchase Number", "Raw Material Name", "Order Date", "Purchase Status", "Supplier Name"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true, true
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -1094,6 +1039,11 @@ public class main extends javax.swing.JFrame {
         btnCurrentStock.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnCurrentStockMouseClicked(evt);
+            }
+        });
+        btnCurrentStock.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCurrentStockActionPerformed(evt);
             }
         });
         inventoryPanel.add(btnCurrentStock, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
@@ -1314,76 +1264,39 @@ public class main extends javax.swing.JFrame {
         subInventoryTwo.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, -1, -1));
 
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
-        subInventoryTwo.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 60, 10, 570));
+        subInventoryTwo.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 70, 10, 570));
 
         jTable6.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null},
-                {null}
+
             },
             new String [] {
                 "Raw Material Name"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
             boolean[] canEdit = new boolean [] {
                 false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        jTable6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable6MouseClicked(evt);
+            }
+        });
         jScrollPane6.setViewportView(jTable6);
 
-        subInventoryTwo.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 210, 570));
+        subInventoryTwo.add(jScrollPane6, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 140, 570));
 
         jLabel20.setFont(new java.awt.Font("Abadi MT Condensed", 0, 18)); // NOI18N
         jLabel20.setText("Raw Material Name:");
@@ -1403,64 +1316,30 @@ public class main extends javax.swing.JFrame {
 
         jTable7.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "Date", "Reference", "Quantity Purchased", "Quantity Used/Sold", "Quantity Adjusted", "Reason", "Quantity Left"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane7.setViewportView(jTable7);
 
-        subInventoryTwo.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 160, 810, 470));
+        subInventoryTwo.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 170, 810, 470));
 
         jTable8.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1480,7 +1359,7 @@ public class main extends javax.swing.JFrame {
             jTable8.getColumnModel().getColumn(4).setPreferredWidth(77);
         }
 
-        subInventoryTwo.add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 130, 810, 30));
+        subInventoryTwo.add(jScrollPane8, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 140, 810, 30));
 
         mainInventory.add(subInventoryTwo, "subInventoryTwo");
 
@@ -1772,7 +1651,6 @@ public class main extends javax.swing.JFrame {
         productsPanel.add(logOutFour, new org.netbeans.lib.awtextra.AbsoluteConstraints(947, 30, 75, 89));
 
         btnRawMat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/rawmat.png"))); // NOI18N
-        btnRawMat.setBorder(null);
         btnRawMat.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRawMatMouseClicked(evt);
@@ -1781,7 +1659,6 @@ public class main extends javax.swing.JFrame {
         productsPanel.add(btnRawMat, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
 
         btnNewProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/newprod.png"))); // NOI18N
-        btnNewProd.setBorder(null);
         btnNewProd.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnNewProdMouseClicked(evt);
@@ -1790,7 +1667,6 @@ public class main extends javax.swing.JFrame {
         productsPanel.add(btnNewProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(223, 30, -1, -1));
 
         btnProdCat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/prodcat.png"))); // NOI18N
-        btnProdCat.setBorder(null);
         btnProdCat.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnProdCatMouseClicked(evt);
@@ -1799,7 +1675,6 @@ public class main extends javax.swing.JFrame {
         productsPanel.add(btnProdCat, new org.netbeans.lib.awtextra.AbsoluteConstraints(346, 30, -1, -1));
 
         btnProdList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/buttons/prodlist.png"))); // NOI18N
-        btnProdList.setBorder(null);
         btnProdList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnProdListMouseClicked(evt);
@@ -3066,27 +2941,26 @@ public class main extends javax.swing.JFrame {
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-            EmpComboBox ecb = new EmpComboBox(jComboBoxEmp, emplist);
-            ecb.execute();
             SuppComboBox scb = new SuppComboBox(jComboBoxSupp, wsc.supplierOrderList());
             scb.execute();
             populateStckComboBox(jComboBoxStocks, wsc.getStckParticular((String)jComboBoxSupp.getSelectedItem()));
             jTable11.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(jComboBoxStocks));
-            //SuppComboBox cb2 = new SuppComboBox(jComboBox1, wsc.supplierOrderList());
-            //cb2.execute();
     }//GEN-LAST:event_formWindowOpened
-
-    private void jTable12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable12MouseClicked
-        try{
-        TableModel model1 = jTable12.getModel();
+    
+    public void pStckpurordTable(){
         int index = jTable12.getSelectedRow();
-        int id = (int)model1.getValueAt(index, 0);
-        System.out.println("id: " +id);
+        int id = (int)stckpurordmodel.getValueAt(index, 0);
         sppList = wsc.getStckParticularPurOrd( id );
         StckPurOrdTable spo = new StckPurOrdTable(jTable13, sppList );
+        spo.execute();
+    }
+    
+    private void jTable12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable12MouseClicked
+        try{
+        stckpurordmodel = jTable12.getModel();
+        pStckpurordTable();
         jLabel32.setText(sppList.get(0).getSupname());
         jLabel33.setText(sppList.get(0).getEmpname());
-        spo.execute();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -3096,27 +2970,62 @@ public class main extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jXDatePicker4ActionPerformed
 
-    private void jButton7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton7MouseClicked
+    public void receiveStockPrompt() throws IllegalStateException{
+      // display the showOptionDialog
+      Object[] options = {"Save and Print",
+                        "Save",
+                        "Cancel"};
+      int choice = JOptionPane.showOptionDialog(null, 
+          "Receive Stock ?", 
+          "Save", 
+          JOptionPane.YES_NO_OPTION, 
+          JOptionPane.QUESTION_MESSAGE, 
+          null, 
+          options, 
+          options[0]);
+      if (choice == JOptionPane.YES_OPTION){
+            receiveStock();
+            printReceiveStock();
+      }else if (choice == JOptionPane.QUESTION_MESSAGE){
+          try{
+              savePurchaseOrder();
+          }catch(Exception e){
+          }
+      }
+    }
+    
+    public void receiveStock(){
         try{
         String datetime = dateTimeF(jSpinner2, jXDatePicker4);
-            StckParticularPurOrd spp = new StckParticularPurOrd();
-            double addQty = 0.0;
+            StckParticularPurOrd spp;
+            double addQty;
             int rows = jTable13.getRowCount();
             int index = jTable12.getSelectedRow();
             int id = (int)model2.getValueAt(index, 0);
+            int qtydelivered;
             for(int i = 0; i< rows; i++){
+                if( model3.getValueAt(i,4).equals(false)){
+                 qtydelivered = (int)model3.getValueAt(i,3);
                  spp = new StckParticularPurOrd( sppList.get(i).getParticularsid(), sppList.get(i).getSuppid() ,id , sppList.get(i).getEmpid(), sppList.get(i).getQtyordered() );
-                 spp.setQtydelivered((int)model3.getValueAt(i,3));
+                 spp.setQtydelivered(qtydelivered);
                  spp.setDatedelivered(datetime);
                  spp.setStckid(sppList.get(i).getStckid());
-                 System.out.println("stckid: " +sppList.get(i).getStckid());
+                 spp.setSppoid(sppList.get(i).getSppoid());
                 wsc.updateStckParticularPurOrd(spp);
-                addQty = (spp.getStckunitequivalent())*(spp.getQtydelivered());
-                System.out.println("stckid: " +sppList.get(i).getStckid());
-                Stock s = new Stock(spp.getStckid(), "update");                       
-                s.setQty(addQty);
-                wsc.updateStckQty( s );
+                addQty = (sppList.get(i).getStckunitequivalent())*(int)model3.getValueAt(i,3);
+                Stock stock = wsc.updateStckQty( sppList.get(i).getStckid(), addQty,"add" );
+                LedgerRecord lr = new LedgerRecord(sppList.get(i).getStckid(), datetime, sppList.get(i).getSppoid());
+                    lr.setQtyleft(stock.getQty());
+                    lr.setQtypurchased(addQty);
+                    lr.setReason("purchased stocks");
+                    wsc.addLedgerRecord(lr);
+                    model3.setRowCount(0);
+                }
             }
+            wsc.updatePurchaseOrder(id);
+            pPurOrd_incomplete(jTable10);
+                    pPurOrd(jTable12);
+                    pPurOrd_complete(jTable14);
         }catch(NullPointerException np){
             JOptionPane.showMessageDialog(null, "Please enter all details of your purchase order.");
         }catch(NumberFormatException nf){
@@ -3124,11 +3033,11 @@ public class main extends javax.swing.JFrame {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    
+    private void jButton7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton7MouseClicked
+        receiveStockPrompt();
     }//GEN-LAST:event_jButton7MouseClicked
-
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        
-    }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton31MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton31MouseClicked
         try{
@@ -3151,8 +3060,7 @@ public class main extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
     
-    public void handleQuit() throws IllegalStateException
-    {
+    public void handleQuit() throws IllegalStateException{
       // display the showOptionDialog
       Object[] options = {"Save and Print",
                         "Save",
@@ -3165,13 +3073,19 @@ public class main extends javax.swing.JFrame {
           null, 
           options, 
           options[0]);
-
+      TableModel model = jTable11.getModel();
       if (choice == JOptionPane.YES_OPTION){
-        savePurchaseOrder();
-        printPurchaseOrder();
+        if(model.getRowCount() == 0){
+            JOptionPane.showMessageDialog(null, "Please add product/s to be ordered from the supplier.");
+        }else{
+            savePurchaseOrder();
+            printPurchaseOrder();
+        }
       }else if (choice == JOptionPane.QUESTION_MESSAGE){
           try{
+            if(model.getRowCount() == 0){
               savePurchaseOrder();
+            }
           }catch(Exception e){
           }
       }
@@ -3183,7 +3097,7 @@ public class main extends javax.swing.JFrame {
             PurchaseOrder po = new PurchaseOrder();
             int rows = jTable11.getRowCount();
             int poid = wsc.addPurOrd(datetime);
-            pPurOrd(jTable10);
+            pPurOrd_incomplete(jTable10);
             pPurOrd(jTable12);
             for(int i = 0; i< rows; i++){
                 String particularname = (String)jTable11.getValueAt(i,0);
@@ -3214,6 +3128,28 @@ public class main extends javax.swing.JFrame {
         }
         model1.setRowCount(0);
     }
+    
+    public void printReceiveStock(){
+    MessageFormat header = new MessageFormat("Receive Stock");
+        MessageFormat footer = new MessageFormat("Page{0, number, integer}");
+        try{
+            jTable13.print(JTable.PrintMode.FIT_WIDTH, header, footer);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        model3.setRowCount(0);
+    }
+    
+    public void printReturnStock(){
+    MessageFormat header = new MessageFormat("Return Stock");
+        MessageFormat footer = new MessageFormat("Page{0, number, integer}");
+        try{
+            jTable15.print(JTable.PrintMode.FIT_WIDTH, header, footer);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        model5.setRowCount(0);
+    }
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
         handleQuit();
     }//GEN-LAST:event_jButton2MouseClicked
@@ -3223,7 +3159,7 @@ public class main extends javax.swing.JFrame {
     }//GEN-LAST:event_jXDatePicker3ActionPerformed
 
     private void jComboBoxEmpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxEmpActionPerformed
-        populateStckComboBox(jComboBoxStocks, wsc.getStckParticular((String)jComboBoxEmp.getSelectedItem()));
+        //populateStckComboBox(jComboBoxStocks, wsc.getStckParticular((String)jComboBoxEmp.getSelectedItem()));
     }//GEN-LAST:event_jComboBoxEmpActionPerformed
 
     private void jButton32MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton32MouseClicked
@@ -3258,8 +3194,115 @@ public class main extends javax.swing.JFrame {
         populateStckComboBox(jComboBoxStocks, wsc.getStckParticular((String)jComboBoxSupp.getSelectedItem()));
     }//GEN-LAST:event_jComboBoxSuppActionPerformed
 
+    private void jTable14MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable14MouseClicked
+        try{
+            TableModel model1 = jTable14.getModel();
+            int index = jTable14.getSelectedRow();
+            int id = (int)model1.getValueAt(index, 0); //wsc.
+            System.out.println(id);
+            returnstcklist = wsc.getRSList(id);
+            StckReturnTable srt = new StckReturnTable(jTable15, returnstcklist);
+            jLabel58.setText(returnstcklist.get(0).getSupname());
+            srt.execute();
+            }catch(Exception e){
+                e.printStackTrace();
+        }
+    }//GEN-LAST:event_jTable14MouseClicked
+
+    private void jXDatePicker6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jXDatePicker6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jXDatePicker6ActionPerformed
+
+    private void jTable6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable6MouseClicked
+        try{
+            TableModel model = jTable6.getModel();
+            int index = jTable6.getSelectedRow();
+            String name = (String)model.getValueAt(index, 0);
+            int id = wsc.getStock(name);
+            lrecordlist = wsc.getLedger( id );
+            PLedger pledger = new PLedger(jTable7, lrecordlist);
+            pledger.execute();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jTable6MouseClicked
+public void returnStockPrompt() throws IllegalStateException{
+      // display the showOptionDialog
+      Object[] options = {"Save and Print",
+                        "Save",
+                        "Cancel"};
+      int choice = JOptionPane.showOptionDialog(null, 
+          "Return Stock ?", 
+          "Save", 
+          JOptionPane.YES_NO_OPTION, 
+          JOptionPane.QUESTION_MESSAGE, 
+          null, 
+          options, 
+          options[0]);
+      if (choice == JOptionPane.YES_OPTION){
+            returnStock();
+            printReturnStock();
+      }else if (choice == JOptionPane.QUESTION_MESSAGE){
+          try{
+              savePurchaseOrder();
+          }catch(Exception e){
+          }
+      }
+    }
+    
+    public void returnStock(){
+        try{
+        String datetime = dateTimeF(jSpinner3, jXDatePicker6);
+            ReturnStock retstck;
+            double addQty;
+            int qtydelivered;
+            int qtyreturned;
+            int rows = jTable15.getRowCount();
+            int index = jTable14.getSelectedRow();
+            int id = (int)model4.getValueAt(index, 0);
+            for(int i = 0; i< rows; i++){
+                qtydelivered = (int)model5.getValueAt(i,2);
+                qtyreturned = (int)model5.getValueAt(i,3);
+                if( qtydelivered < qtyreturned ){
+                    JOptionPane.showMessageDialog(null, "Cannot return quantity greater that current value. ");
+                 }else{
+                 retstck = new ReturnStock( qtyreturned, returnstcklist.get(i).getSppoid() );
+                 retstck.setQtydelivered(qtydelivered);
+                 retstck.setReturnid(returnstcklist.get(i).getReturnid());
+                wsc.returnStock( retstck );
+                addQty = (returnstcklist.get(i).getStckunitequivalent())*(int)model5.getValueAt(i,3);
+                Stock stock = wsc.updateStckQty( returnstcklist.get(i).getStckid(), addQty,"subtract" );
+                LedgerRecord lr = new LedgerRecord(returnstcklist.get(i).getStckid(), datetime, returnstcklist.get(i).getSppoid());   
+                lr.setQtyleft(stock.getQty());
+                    lr.setQtyadjusted(addQty);
+                    lr.setReason("returned stock");
+                    wsc.addLedgerRecord(lr);
+                    pPurOrd_incomplete(jTable10);
+                    pPurOrd(jTable12);
+                    pPurOrd_complete(jTable14);
+                    model5.setRowCount(0);
+                }
+            }
+            wsc.updatePurchaseOrder(id);
+        }catch(NullPointerException np){
+            JOptionPane.showMessageDialog(null, "Please enter all details of your purchase order.");
+        }catch(NumberFormatException nf){
+            JOptionPane.showMessageDialog(null, "Please enter valid details of your order/s.");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    private void jButton9MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton9MouseClicked
+        returnStockPrompt();
+    }//GEN-LAST:event_jButton9MouseClicked
+
+    private void btnCurrentStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCurrentStockActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCurrentStockActionPerformed
+
     public void populateStckComboBox(JComboBox combobox, ArrayList<StckParticular> list ){
-        StckComboBox sc = new StckComboBox(combobox, list);
+        StckParticularComboBox sc = new StckParticularComboBox(combobox, list);
         sc.execute();
     }
     
@@ -3270,7 +3313,6 @@ public class main extends javax.swing.JFrame {
                 Date selectedDate = new java.sql.Date(datepicker.getDate().getTime());
                 String date = datef.format(selectedDate);
                 String datetimes = date + " " + time;
-                System.out.println(datetimes);
                 return datetimes;
     }
     /**
@@ -3316,12 +3358,32 @@ public class main extends javax.swing.JFrame {
         pl.execute();
     }
     
+    public void pPurOrd_incomplete(JTable jtable){
+        DefaultTableModel model = (DefaultTableModel) jtable.getModel();
+        model.setRowCount(0);
+        POListTable_incomplete pl = new POListTable_incomplete(jtable, wsc.purchaseOrderList());
+        pl.execute();
+    }
+    
+    public void pPurOrd_complete(JTable jtable){
+        DefaultTableModel model = (DefaultTableModel) jtable.getModel();
+        model.setRowCount(0);
+        POListTable_complete pl = new POListTable_complete(jtable, wsc.purchaseOrderList());
+        pl.execute();
+    }
+   
+    private ArrayList<Stock> stcklist;
     private ArrayList<Employee> emplist;
     private ArrayList<StckParticular> splist;
     private ArrayList<StckParticularPurOrd> sppList;
+    private ArrayList<ReturnStock> returnstcklist;
+    private ArrayList<LedgerRecord> lrecordlist;
     private static DefaultTableModel model1;
     private static DefaultTableModel model2;
     private static DefaultTableModel model3;
+    private static DefaultTableModel model4;
+    private static DefaultTableModel model5;
+    private static TableModel stckpurordmodel;
     private javax.swing.JComboBox<String> jComboBoxStocks;
     private javax.swing.JComboBox<String> jComboBoxUnits;
     private static WSClient wsc;
@@ -3349,8 +3411,6 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JButton inventory;
     private javax.swing.JPanel inventoryPanel;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
@@ -3375,10 +3435,8 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JButton jButton32;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
     private javax.swing.JComboBox<String> jComboBox5;
     private javax.swing.JComboBox<String> jComboBox6;
@@ -3421,13 +3479,12 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
-    private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
-    private javax.swing.JLabel jLabel48;
-    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel50;
     private javax.swing.JLabel jLabel51;
@@ -3436,6 +3493,8 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel54;
     private javax.swing.JLabel jLabel55;
     private javax.swing.JLabel jLabel56;
+    private javax.swing.JLabel jLabel57;
+    private javax.swing.JLabel jLabel58;
     private javax.swing.JLabel jLabel59;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel60;
@@ -3484,7 +3543,6 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator17;
     private javax.swing.JSeparator jSeparator18;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator21;
     private javax.swing.JSeparator jSeparator22;
     private javax.swing.JSeparator jSeparator23;
     private javax.swing.JSeparator jSeparator24;
@@ -3500,6 +3558,7 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator9;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;
+    private javax.swing.JSpinner jSpinner3;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable10;
     private javax.swing.JTable jTable11;
@@ -3537,7 +3596,7 @@ public class main extends javax.swing.JFrame {
     private org.jdesktop.swingx.JXDatePicker jXDatePicker2;
     private org.jdesktop.swingx.JXDatePicker jXDatePicker3;
     private org.jdesktop.swingx.JXDatePicker jXDatePicker4;
-    private org.jdesktop.swingx.JXDatePicker jXDatePicker5;
+    private org.jdesktop.swingx.JXDatePicker jXDatePicker6;
     private javax.swing.JButton logIn;
     private javax.swing.JPanel logInPanel;
     private javax.swing.JLabel logOutFour;

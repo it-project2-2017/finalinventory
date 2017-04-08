@@ -11,22 +11,22 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author gina PC
  */
-@XmlRootElement(name="purchaseorderlist")
+@XmlRootElement(name="ledger")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PurchaseOrderList implements Serializable {
+public class Ledger implements Serializable {
     @XmlElement(required=true)
-    ArrayList<PurchaseOrder> list;
+    ArrayList<LedgerRecord> list;
 
-    public PurchaseOrderList(){
+    public Ledger(){
     }
-    public PurchaseOrderList(ArrayList<PurchaseOrder> list){
+    public Ledger(ArrayList<LedgerRecord> list){
         this.list = list;
     }
-    public ArrayList<PurchaseOrder> getList() {
+    public ArrayList<LedgerRecord> getList() {
         return list;
     }
 
-    public void setList(ArrayList<PurchaseOrder> list) {
+    public void setList(ArrayList<LedgerRecord> list) {
         this.list = list;
     }
 }

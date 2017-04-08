@@ -5,7 +5,6 @@
  */
 package inventorypanbox;
 
-import beans.Product;
 import beans.PurchaseOrder;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +40,8 @@ public class POListTable extends SwingWorker<Void, PurchaseOrder>{
     protected void process(List<PurchaseOrder> chunks) {
         DefaultTableModel dtm = (DefaultTableModel) table.getModel();
         dtm.setRowCount(0);
-        for(PurchaseOrder p : chunks) {
-            dtm.addRow(new Object[]{p.getPoid(), p.getDateordered()});
-        }
+            for(PurchaseOrder p : chunks) {
+                    dtm.addRow(new Object[]{p.getPoid(), p.getDateordered(), p.getStatus()});
+            }
     }
-    
-    
-    
 }

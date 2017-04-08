@@ -50,6 +50,9 @@ public class StckPurOrdTable extends SwingWorker<Void, StckParticularPurOrd>{
         DefaultTableModel dtm = (DefaultTableModel) table.getModel();
         dtm.setRowCount(0);
         for(StckParticularPurOrd spp : chunks) {
+            if(spp.getStatus().equals("received")){
+                bool = true;
+            }
             dtm.addRow(new Object[]{spp.getParticularsid(), spp.getStckparticularname(), spp.getQtyordered(), spp.getQtydelivered(), bool});
         }
     }

@@ -5,7 +5,8 @@
  */
 package inventorypanbox;
 
-import beans.Stock;
+import beans.ReturnStock;
+import beans.StckParticularPurOrd;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
@@ -16,12 +17,12 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author hp
  */
-public class StckComboBox extends SwingWorker<Void, Stock>{
+public class StckReturnTable extends SwingWorker<Void, ReturnStock>{
     
     private final JTable table;
-    private final ArrayList<Stock> list;
+    private final ArrayList<ReturnStock> list;
 
-    public StckComboBox(JTable table, ArrayList<Stock> list) {
+    public StckReturnTable(JTable table, ArrayList<ReturnStock> list) {
         this.table = table;
         this.list = list;
     }
@@ -30,18 +31,19 @@ public class StckComboBox extends SwingWorker<Void, Stock>{
 
     @Override
     protected Void doInBackground() throws Exception {
-        for(Stock s : list) {
+        for(ReturnStock s : list) {
             publish(s);
         }
         return null;
     }
 
     @Override
-    protected void process(List<Stock> chunks) {
+    protected void process(List<ReturnStock> chunks) {
+        Boolean bool = false;
         DefaultTableModel dtm = (DefaultTableModel) table.getModel();
         dtm.setRowCount(0);
-        for(Stock s : chunks) {
-            dtm.addRow(new Object[]{s.getStockName()});
+        for(ReturnStock retstck : chunks) {
+            dtm.addRow(new Object[]{retstck.getStckparticularid(), retstck.getStckparticularname(), retstck.getQtydelivered(), retstck.getQtyreturned()});
         }
-}
+    }   
 }
